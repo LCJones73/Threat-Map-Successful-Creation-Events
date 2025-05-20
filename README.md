@@ -22,7 +22,9 @@ This creates the following Threat Map:
 > Next in this code we are now looking for caller activity: | where CallerIpAddress matches regex _@"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b_"<BR><BR>
 > Then we are using the code to look for successfiul "Write" (resource creation) events: | where OperationNameValue endswith "WRITE" and (ActivityStatusValue == "Success" or ActivityStatusValue == "Succeeded")
 | summarize ResouceCreationCount = count() by Caller, CallerIpAddress;<BR><BR>
-> The next section of code is now taking the "Caller" (user) on the network and takes those who have successful creation events and locates them to create the Threat Map.
-> While this is not an exhaustive dive into this code, the goal is to help it make sense so that you understand how, at a "fundamental level", it is created. You can see that this code is a bit more complicated than the code in the Successful and Failed Login events. In that code the difference was an "=" or a "!" to find these log events. This code has to look for more information to achieve the goal.
+> The next section of code is now taking the "Caller" (user) on the network and takes those who have successful creation events and locates them to create the Threat Map.<BR><BR>
+> This next section of code starts with "_AzureActivityRecords_" and uses the following code: _| evaluate ipv4_lookup(GeoIPDB_FULL, CallerIpAddress, network)_
+>The code using IPV4 is another table which is used to lookup IPV4 Address to location mapping, this is able to prode Geo Location info so we can create the map.<BR><BR>
+> While this is not an exhaustive dive into this code, the goal is to help it make sense so that you understand how, at a "fundamental level", the map is created. You can see that this code is a bit more complicated than the code in the Successful and Failed Login events. In that code the difference was an "=" or a "!" to find these log events. This code has to look for more information to achieve the goal.
 >
 > That ends this project, next we will create a threat map that shows "VM Authentication Failures".
